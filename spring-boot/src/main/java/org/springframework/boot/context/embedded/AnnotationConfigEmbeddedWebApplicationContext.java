@@ -58,13 +58,13 @@ public class AnnotationConfigEmbeddedWebApplicationContext
 	private String[] basePackages;
 
 	/**
-	 * 实例化随即注册了注解类的后处理器，专门处理启动类上的标识
+	 * 实例化随即注册了注解类的后处理器，处理启动类上的注解信息
 	 * Create a new {@link AnnotationConfigEmbeddedWebApplicationContext} that needs to be
 	 * populated through {@link #register} calls and then manually {@linkplain #refresh
 	 * refreshed}.
 	 */
 	public AnnotationConfigEmbeddedWebApplicationContext() {
-		// 实例化随即注册了注解类的后处理器，专门处理启动类上的标识
+		// 实例化随即注册了注解类的后处理器，处理启动类上的注解信息
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
