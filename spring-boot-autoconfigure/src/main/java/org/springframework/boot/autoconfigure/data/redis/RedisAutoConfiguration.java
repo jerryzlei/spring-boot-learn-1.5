@@ -89,6 +89,7 @@ public class RedisAutoConfiguration {
 		@ConditionalOnMissingBean(RedisConnectionFactory.class)
 		public JedisConnectionFactory redisConnectionFactory()
 				throws UnknownHostException {
+			// 传入参数根据配置生成单机、集群或哨兵模式的JedisConnectionFactory
 			return applyProperties(createJedisConnectionFactory());
 		}
 
@@ -220,6 +221,8 @@ public class RedisAutoConfiguration {
 
 	/**
 	 * Standard Redis configuration.
+	 * 上面部分主要根据配置文件生成RedisConnectionFactory，包含了单机、集群、哨兵模式配置
+	 * 并在该部分生成可使用的模板
 	 */
 	@Configuration
 	protected static class RedisConfiguration {

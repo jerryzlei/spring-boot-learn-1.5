@@ -204,8 +204,10 @@ public class SpringApplication {
 
 	private boolean registerShutdownHook = true;
 
+	/** springboot web环境初始化为SharedMetadataReaderFactoryContextInitializer和一个log的类*/
 	private List<ApplicationContextInitializer<?>> initializers;
 
+	/** springboot web环境初始化为BackgroundPreinitializer*/
 	private List<ApplicationListener<?>> listeners;
 
 	private Map<String, Object> defaultProperties;
@@ -240,6 +242,7 @@ public class SpringApplication {
 		initialize(sources);
 	}
 
+	/** 主要初始化SharedMetadataReaderFactoryContextInitializer和BackgroundPreinitializer*/
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initialize(Object[] sources) {
 		if (sources != null && sources.length > 0) {
@@ -298,6 +301,8 @@ public class SpringApplication {
 			Banner printedBanner = printBanner(environment);
 			context = createApplicationContext();
 			analyzers = new FailureAnalyzers(context);
+			// 初始化beanPostProcessor和将source解析为beanDefinition并注册
+			// （此时几乎只有beanPostProcessor注册了）
 			prepareContext(context, environment, listeners, applicationArguments,
 					printedBanner);
 			refreshContext(context);
@@ -335,6 +340,9 @@ public class SpringApplication {
 			ApplicationArguments applicationArguments, Banner printedBanner) {
 		context.setEnvironment(environment);
 		postProcessApplicationContext(context);
+		// 这里初始化了一些属性，比如注册CachingMetadataReaderFactoryPostProcessor
+		// 同时在ConfigurationClassPostProcessor的beanDefinition中propertyValues
+		// 中加入metadataFactory属性
 		applyInitializers(context);
 		listeners.contextPrepared(context);
 		if (this.logStartupInfo) {
@@ -352,6 +360,7 @@ public class SpringApplication {
 		// Load the sources
 		Set<Object> sources = getSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
+		// 初始化beanDefinitionReader，并载入beanDefinition，此时只载入了source的类
 		load(context, sources.toArray(new Object[sources.size()]));
 		listeners.contextLoaded(context);
 	}
@@ -621,6 +630,7 @@ public class SpringApplication {
 			logger.debug(
 					"Loading source " + StringUtils.arrayToCommaDelimitedString(sources));
 		}
+		// 初始化beanDefinitionReader
 		BeanDefinitionLoader loader = createBeanDefinitionLoader(
 				getBeanDefinitionRegistry(context), sources);
 		if (this.beanNameGenerator != null) {
